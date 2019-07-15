@@ -1,0 +1,1 @@
+﻿yourPath\idr-downloader.exe --username=yourusername --password=yourpassword --type=entitiesORrelationshipsORreviewstatusORblank --partnerid=4 --changessince=yyyyMMdd --savepath=C:\temp
