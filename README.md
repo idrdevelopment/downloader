@@ -23,4 +23,4 @@ This application allows to download IDR information as a CSV file to your PC or 
 ## Contributing
 Issues and PR's are much appreciated. We're currently working on reducing them.
 When you create a new PR please make it against the develop branch when adding new features and to the fix branch when fixing small issues instead of master.
- 
+  
