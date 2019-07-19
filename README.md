@@ -1,6 +1,6 @@
 ﻿## TheIDRegister Downloader
 This application allows to download IDR information as a CSV file to your PC or laptop.
-
+ 
 # Features
 - Download entity partners.
 - Download entity relationships.
