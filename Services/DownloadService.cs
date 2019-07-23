@@ -34,17 +34,42 @@
             DownloadPartners(arguments, webClient);
             DownloadRelationships(arguments, webClient);
             DownloadReviews(arguments, webClient);
-            UpdateChangesSince();
+            UpdateChangesSince(arguments);
 
             return arguments;
         }
 
-        private void UpdateChangesSince()
+        private void UpdateChangesSince(Arguments arguments)
         {
             var myJson = GetJson();
 
-            myJson.ChangesSince = DateTime.Now.ToString(DateFormat);
-            
+            if (string.IsNullOrWhiteSpace(arguments.ChangesSince) &&
+                string.IsNullOrWhiteSpace(arguments.ChangesSincePartners) &&
+                string.IsNullOrWhiteSpace(arguments.ChangesSinceRelationships) &&
+                string.IsNullOrWhiteSpace(arguments.ChangesSinceReviews))
+            {
+                myJson.ChangesSincePartners = DateTime.Now.ToString(DateFormat);
+                myJson.ChangesSinceRelationships = DateTime.Now.ToString(DateFormat);
+                myJson.ChangesSinceReviews = DateTime.Now.ToString(DateFormat);
+            }
+            else
+            {
+                if (!string.IsNullOrWhiteSpace(arguments.ChangesSincePartners) && (arguments.DownloadType == "all" || arguments.DownloadType == "entities"))
+                {
+                    myJson.ChangesSincePartners = DateTime.Now.ToString(DateFormat);
+                }
+
+                if (!string.IsNullOrWhiteSpace(arguments.ChangesSinceRelationships) && (arguments.DownloadType == "all" || arguments.DownloadType == "relationships"))
+                {
+                    myJson.ChangesSinceRelationships = DateTime.Now.ToString(DateFormat);
+                }
+
+                if (!string.IsNullOrWhiteSpace(arguments.ChangesSinceReviews) && (arguments.DownloadType == "all" || arguments.DownloadType == "reviewstatus"))
+                {
+                    myJson.ChangesSinceReviews = DateTime.Now.ToString(DateFormat);
+                }
+            }
+
             File.WriteAllText("my.json", JsonConvert.SerializeObject(myJson));
         }
 
@@ -68,7 +93,7 @@
             {
                 var argParts = arg.Split('=');
 
-                argParts[0] = argParts[0].TrimStart('-');
+                argParts[0] = argParts[0].TrimStart('-').ToLower();
 
                 switch (argParts[0])
                 {
@@ -85,7 +110,18 @@
                         arguments.PartnerId = argParts[1];
                         break;
                     case "changessince":
-                        arguments.ChangesSince = DateTime.ParseExact(argParts[1], DateFormat, null).ToString(DateFormat);
+                        arguments.ChangesSincePartners = GetFormattedDateAsString(argParts[1]);
+                        arguments.ChangesSinceRelationships = GetFormattedDateAsString(argParts[1]);
+                        arguments.ChangesSinceReviews = GetFormattedDateAsString(argParts[1]);
+                        break;
+                    case "changessincepartners":
+                        arguments.ChangesSincePartners = GetFormattedDateAsString(argParts[1]);
+                        break;
+                    case "changessincerelationships":
+                        arguments.ChangesSinceRelationships = GetFormattedDateAsString(argParts[1]);
+                        break;
+                    case "changessincereviews":
+                        arguments.ChangesSinceReviews = GetFormattedDateAsString(argParts[1]);
                         break;
                     case "savepath":
                         arguments.SavePath = argParts[1];
@@ -94,6 +130,11 @@
             }
 
             return arguments;
+        }
+
+        private string GetFormattedDateAsString(string date)
+        {
+            return DateTime.Parse(date).ToString(DateFormat);
         }
 
         private void PrepareUrls(Arguments arguments)
@@ -134,16 +175,36 @@
 
         private void AddChangesSinceToUrls(Arguments arguments)
         {
-            if (string.IsNullOrWhiteSpace(arguments.ChangesSince))
+            var myJson = GetJson();
+
+            if (string.IsNullOrWhiteSpace(arguments.ChangesSince) && string.IsNullOrWhiteSpace(arguments.ChangesSincePartners))
             {
-                arguments.ChangesSince = GetJson().ChangesSince;
+                arguments.ChangesSincePartners = myJson.ChangesSincePartners;
             }
-            
-            if (!string.IsNullOrWhiteSpace(arguments.ChangesSince))
+
+            if (!string.IsNullOrWhiteSpace(arguments.ChangesSincePartners))
             {
-                arguments.EntityUrl = $"{arguments.EntityUrl}&changesSince={arguments.ChangesSince}";
-                arguments.RelationshipUrl = $"{arguments.RelationshipUrl}&changesSince={arguments.ChangesSince}";
-                arguments.ReviewUrl = $"{arguments.ReviewUrl}&changesSince={arguments.ChangesSince}";
+                arguments.EntityUrl = $"{arguments.EntityUrl}&changesSince={arguments.ChangesSincePartners}";
+            }
+
+            if (string.IsNullOrWhiteSpace(arguments.ChangesSince) && string.IsNullOrWhiteSpace(arguments.ChangesSinceRelationships))
+            {
+                arguments.ChangesSinceRelationships = myJson.ChangesSinceRelationships;
+            }
+
+            if (!string.IsNullOrWhiteSpace(arguments.ChangesSinceRelationships))
+            {
+                arguments.RelationshipUrl = $"{arguments.RelationshipUrl}&changesSince={arguments.ChangesSinceRelationships}";
+            }
+
+            if (string.IsNullOrWhiteSpace(arguments.ChangesSince) && string.IsNullOrWhiteSpace(arguments.ChangesSinceReviews))
+            {
+                arguments.ChangesSinceReviews = myJson.ChangesSinceReviews;
+            }
+
+            if (!string.IsNullOrWhiteSpace(arguments.ChangesSinceReviews))
+            {
+                arguments.ReviewUrl = $"{arguments.ReviewUrl}&changesSince={arguments.ChangesSinceReviews}";
             }
         }
 

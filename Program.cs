@@ -1,14 +1,14 @@
-﻿using System;
-using System.Reflection;
-using Microsoft.Extensions.DependencyInjection;
-using ISC.IDRDownloader.Services;
-using ISC.IDRDownloader.Services.Contracts;
-using ISC.IDRDownloader.Validation.Contracts;
-using ISC.IDRDownloader.Validation;
-using Microsoft.Extensions.Logging;
-
-namespace ISC.IDRDownloader
+﻿namespace ISC.IDRDownloader
 {
+    using System;
+    using System.Reflection;
+    using Microsoft.Extensions.DependencyInjection;
+    using ISC.IDRDownloader.Services;
+    using ISC.IDRDownloader.Services.Contracts;
+    using ISC.IDRDownloader.Validation.Contracts;
+    using ISC.IDRDownloader.Validation;
+    using Microsoft.Extensions.Logging;
+
     public class Program
     {
         public static void Main(string[] args)
@@ -45,6 +45,8 @@ namespace ISC.IDRDownloader
 
                 Console.Write($"An error has occured. This has been logged here '{location}'. You can email this log to help@theidregister.com for help.");
             }
+
+            Console.ReadKey();
 
             serviceProvider.Dispose();
         }

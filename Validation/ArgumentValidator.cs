@@ -8,7 +8,19 @@
 
     public class ArgumentValidator : IArgumentValidator
     {
-        private string[] validArgs = new string[] { "--username", "--password", "--partnerid", "--changessince", "--type", "--savepath" };
+        private string[] validArgs = new string[] 
+        {
+            "--username",
+            "--password",
+            "--partnerid",
+            "--changessince",
+            "--changessincepartners",
+            "--changessincerelationships",
+            "--changessincereviews",
+            "--type",
+            "--savepath"
+        };
+
         private string[] validTypes = new string[] { "entities", "relationships", "reviewstatus", "all" };
 
         public StringBuilder Validate(string[] args)
@@ -27,11 +39,11 @@
 
                 if (argParts.Length != 2)
                 {
-                    errors.AppendLine($"Argument '{argParts[0]}' should be in the format '--argument=value'");
+                    errors.AppendLine($"Argument '{argParts[0]}' should be in the format '--argument=value'. Arguments should be separated by a space.");
                     continue;
                 }
 
-                if (!validArgs.Contains(argParts[0]))
+                if (!validArgs.Contains(argParts[0].ToLower()))
                 {
                     invalidArgs.Add(argParts[0]);
                 }
@@ -51,7 +63,7 @@
 
         private void ValidateType(string[] args, StringBuilder errors)
         {
-            if (args[0] == "--type")
+            if (args[0].ToLower() == "--type")
             {
                 if (!validTypes.Contains(args[1]))
                 {
@@ -62,7 +74,7 @@
 
         private void ValidatePartnerId(string[] args, StringBuilder errors)
         {
-            if (args[0] == "--partnerid")
+            if (args[0].ToLower() == "--partnerid")
             {
                 int partnerId;
 
@@ -75,13 +87,18 @@
 
         private void ValidateChangesSince(string[] args, StringBuilder errors)
         {
-            if (args[0] == "--changessince")
+            var argument = args[0].ToLower().TrimStart('-');
+
+            if (argument == "changessince" ||
+                argument == "changessincepartners" ||
+                argument == "changessincerelationships" ||
+                argument == "changessincereviews")
             {
                 DateTime changesSince;
 
-                if (!DateTime.TryParseExact(args[1], "yyyy-MM-ddTHH:mm:ss", null, System.Globalization.DateTimeStyles.None, out changesSince))
+                if (!DateTime.TryParse(args[1], out changesSince))
                 {
-                    errors.AppendLine($"'changessince' should be a date but is '{args[1]}'");
+                    errors.AppendLine($"'{argument}' should be a date but is '{args[1]}'");
                 }
             }
         }

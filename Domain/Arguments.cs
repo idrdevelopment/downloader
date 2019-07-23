@@ -18,6 +18,12 @@
 
         public string ChangesSince { get; set; }
 
+        public string ChangesSincePartners { get; set; }
+
+        public string ChangesSinceRelationships { get; set; }
+
+        public string ChangesSinceReviews { get; set; }
+
         public string SavePath { get; set; }
 
         public string EntityUrl { get; set; }

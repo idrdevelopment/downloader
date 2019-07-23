@@ -4,7 +4,13 @@
 
     public class MyJson
     {
-        [JsonProperty("changesSince")]
-        public string ChangesSince { get; set; }
+        [JsonProperty("changesSincePartners")]
+        public string ChangesSincePartners { get; set; }
+
+        [JsonProperty("changesSinceRelationships")]
+        public string ChangesSinceRelationships { get; set; }
+
+        [JsonProperty("changesSinceReviews")]
+        public string ChangesSinceReviews { get; set; }
     }
 }
